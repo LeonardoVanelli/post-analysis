@@ -1,0 +1,8 @@
+.main {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.value {
+  color: rgb(39, 247, 53);
+}

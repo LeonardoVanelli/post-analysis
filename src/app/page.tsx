@@ -1,95 +1,94 @@
-import Image from 'next/image'
-import styles from './page.module.css'
+'use client';
+
+import { Display } from '@/components/Display';
+import { Info } from '@/components/Info';
+import { PostToCsvBuilder } from '@/utils/PostToCsvBuilder';
+import { booleanToString } from '@/utils/boolean';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+import styles from './page.module.css';
 
 export default function Home() {
+  const [post, setPost] = useState<any>(null);
+  const [accountName, setAccountName] = useState<any>('');
+
+  async function getPost() {
+    if (accountName) {
+      const response = await axios.get('api/posts', {
+        params: {
+          max_id: post ? post.id : '',
+          count: 2,
+          account_name: accountName,
+        },
+      });
+
+      setPost(response.data);
+    }
+  }
+
+  const copyToClipboard = () => {
+    const postToCsvBuilder = new PostToCsvBuilder();
+    postToCsvBuilder.addPost(post);
+
+    navigator.clipboard.writeText(postToCsvBuilder.build());
+  };
+
+  useEffect(() => {
+    getPost();
+  }, []);
+
+  useEffect(() => {
+    console.log(post?.video?.url ?? 'não é vídeo');
+  }, [post]);
+
+  const handleClickNext = () => {
+    getPost();
+  };
+
   return (
     <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+      <div className={styles.center}>
+        {post && (
+          <>
+            <div className={styles.infos}>
+              <Info label="Postado em">{post.created_at}</Info>
+              <Info label="Link">
+                <a href={post.url}>{post.url}</a>
+              </Info>
+              <Info label="Foto ou vídeos">
+                {post.video ? 'Vídeo' : 'Foto'}
+              </Info>
+              <Info label="Tem hashtag">
+                {booleanToString(post.has_hashtag)}
+              </Info>
+              <Info label="Hora útil">
+                {booleanToString(post.is_working_hours)}
+              </Info>
+              <Info label="Dia útil">{booleanToString(post.is_weekday)}</Info>
+              <Info label="Caracteres na legenda">
+                {post.description_count}
+              </Info>
+              <Info label="Curtidas">{post.like_count}</Info>
+              <Info label="Comentários">{post.comment_count}</Info>
+              <Info label="Tem áudio">{booleanToString(post.has_audio)}</Info>
+            </div>
+
+            <p>{post.description}</p>
+          </>
+        )}
+
+        <Display post={post} />
+
+        <div className={styles.footer}>
+          <label>Nome da conta</label>
+          <input
+            value={accountName}
+            onChange={(e) => setAccountName(e.target.value)}
+          />
+          <button onClick={handleClickNext}>Próximo</button>
+          <button onClick={copyToClipboard}>Copiar linha para CSV</button>
         </div>
       </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
     </main>
-  )
+  );
 }

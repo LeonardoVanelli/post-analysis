@@ -1,0 +1,8 @@
+.carousel {
+  display: flex;
+  flex-direction: row;
+  width: 98vw;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+}

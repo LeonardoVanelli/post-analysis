@@ -39,8 +39,6 @@ class PostToCsvBuilder {
   }
 
   build() {
-    console.log({ post: this.post });
-
     const csvLines = this.order
       .map((itemOrder) => {
         const value = this.post[itemOrder] ?? '';

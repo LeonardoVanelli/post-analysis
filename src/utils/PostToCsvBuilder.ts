@@ -14,7 +14,7 @@ class PostToCsvBuilder {
       '',
       'is_video',
       '',
-      '',
+      'is_carousel',
       'has_audio',
       '',
       'has_hashtag',

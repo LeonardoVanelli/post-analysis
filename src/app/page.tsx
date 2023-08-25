@@ -77,14 +77,14 @@ export default function Home() {
                 <td>
                   <a href={post.url}>{post.url}</a>
                 </td>
-                <td>{}</td>
+                <td></td>
                 <td>{booleanToString(post.is_photo)}</td>
                 <td></td>
                 <td></td>
                 <td></td>
                 <td>{booleanToString(post.is_video)}</td>
                 <td></td>
-                <td></td>
+                <td>{booleanToString(post.is_carousel)}</td>
                 <td>{booleanToString(post.has_audio)}</td>
                 <td></td>
                 <td>{booleanToString(post.has_hashtag)}</td>
@@ -96,8 +96,8 @@ export default function Home() {
                 <td></td>
                 <td></td>
                 <td></td>
-                <td>{post.is_working_hours}</td>
-                <td>{post.is_weekday}</td>
+                <td>{booleanToString(post.is_working_hours)}</td>
+                <td>{booleanToString(post.is_weekday)}</td>
                 <td>{post.description_count}</td>
                 <td>{post.like_count}</td>
                 <td>{post.comment_count}</td>
@@ -111,7 +111,7 @@ export default function Home() {
           value={accountName}
           onChange={(e) => setAccountName(e.target.value)}
         />
-        <button onClick={startProcess}>Consultar + 23 registros</button>
+        <button onClick={startProcess}>Consultar mais registros</button>
         <button onClick={copyToClipboard}>Copiar linhas para CSV</button>
       </div>
       <div>

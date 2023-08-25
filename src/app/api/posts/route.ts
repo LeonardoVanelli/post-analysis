@@ -31,6 +31,7 @@ export async function GET(request: NextRequest) {
     }
 
     let carousel_media: any = [];
+    let is_video = false;
     if (post.carousel_media) {
       post.carousel_media.map((cm: any) => {
         const cmFiltered = cm.image_versions2.candidates.find(
@@ -38,6 +39,7 @@ export async function GET(request: NextRequest) {
             candidate.width === 480 && candidate.height === 600
         );
 
+        if (cm.media_type === 2) is_video = true;
         carousel_media.push(cmFiltered);
       });
     }
@@ -65,9 +67,10 @@ export async function GET(request: NextRequest) {
       is_weekday: isWeekday(created_at),
       is_working_hours: isWorkingHours(created_at),
       is_photo: video ? false : true,
-      is_video: video ? true : false,
+      is_video: is_video || post.media_type === 2,
       date: format(created_at, 'dd/MM'),
       time: format(created_at, 'hh:mm'),
+      is_carousel: post.media_type === 8,
     };
 
     const postToCsvBuilder = new PostToCsvBuilder();
@@ -80,7 +83,7 @@ export async function GET(request: NextRequest) {
   });
 
   return NextResponse.json(
-    { items: postsFormatted, next_max_id: posts.next_max_id },
+    { items: postsFormatted, next_max_id: postsInfos.next_max_id },
     { status: 200 }
   );
 }
